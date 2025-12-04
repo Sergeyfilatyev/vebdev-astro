@@ -1,0 +1,19 @@
+---
+
+const {body_html} = Astro.props;
+---
+
+<section class='my-8'>
+	{
+		!body_html && (
+			<p class='text-red-600'>
+				HTML не сгенерирован. Зайди в админку и пересохрани страницу!
+			</p>
+		)
+	}
+
+	<div
+		class='prose max-w-none text-blue-500'
+		set:html={body_html}
+	/>
+</section>

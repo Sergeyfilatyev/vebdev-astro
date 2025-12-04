@@ -1,0 +1,73 @@
+---
+import BlockRenderer from '@/components/BlockRenderer.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+interface Page {
+	title: string;
+	slug: string;
+	blocks: any[];
+	locale: string;
+}
+
+interface Props {
+	page: Page;
+}
+
+export async function getStaticPaths() {
+	// 1. Переменные внутри функции (как мы и договорились)
+	const langs = ['en', 'ru', 'uk'];
+	const defaultLang = 'uk';
+	const cmsUrl = import.meta.env.CMS_URL || 'http://localhost:3000';
+
+	const paths: any = [];
+
+	for (const lang of langs) {
+		try {
+			const response = await fetch(
+				`${cmsUrl}/api/pages?locale=${lang}&limit=1000`
+			);
+
+			if (!response.ok) {
+				console.error(
+					`[Payload CMS Error] Failed to fetch pages for locale: ${lang}`
+				);
+				continue;
+			}
+
+			const {docs: pages} = await response.json();
+
+			pages.forEach((page: any) => {
+				const slugParts = [];
+				if (lang !== defaultLang) {
+					slugParts.push(lang);
+				}
+				if (page.slug && page.slug !== 'home') {
+					slugParts.push(page.slug);
+				}
+				const slugString = slugParts.join('/');
+
+				paths.push({
+					params: {
+						slug: slugString || undefined,
+					},
+					props: {
+						page: {
+							...page,
+							locale: lang,
+						},
+					},
+				});
+			});
+		} catch (e) {
+			console.error(`[Error] Could not fetch data for ${lang}:`, e);
+		}
+	}
+	return paths;
+}
+
+const {page} = Astro.props;
+---
+
+<BaseLayout title={page.title}>
+	<BlockRenderer blocks={page.blocks} />
+</BaseLayout>

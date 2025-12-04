@@ -1,0 +1,19 @@
+---
+// Получаем данные, которые пришли из Payload
+const {title, text, type} = Astro.props;
+---
+
+<section
+	style='background-color: #e6f3ff; padding: 4rem 2rem; border-radius: 12px; margin-bottom: 2rem;'>
+	<small style='color: gray; text-transform: uppercase;'
+		>Тип блока: {type}</small
+	>
+
+	<h1 style='color: #004488; font-size: 3rem; margin-bottom: 1rem;'>
+		{title}
+	</h1>
+
+	<p style='font-size: 1.25rem; color: #333;'>
+		{text}
+	</p>
+</section>
