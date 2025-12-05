@@ -1,6 +1,6 @@
 ---
-import Hero from './Hero.astro';
-import Content from './Content.astro';
+import Hero from './blocks/Hero.astro';
+import Content from './blocks/Content.astro';
 
 const {blocks} = Astro.props;
 ---
@@ -13,7 +13,6 @@ const {blocks} = Astro.props;
 			case 'content':
 				return <Content {...block} />;
 			default:
-				// Если создали новый блок в CMS, но забыли сделать компонент в Astro
 				return (
 					<div class="text-red-600 p-4 border border-red-600 my-4">
 						Неизвестный блок: {block.blockType}

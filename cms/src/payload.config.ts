@@ -9,7 +9,8 @@ import sharp from 'sharp';
 import {Users} from './collections/Users';
 import {Media} from './collections/Media';
 import {Pages} from './collections/Pages';
-import {Hero} from './blocks/Hero';
+import {Header} from './global/Header';
+import {Footer} from './global/Footer';
 
 import {en} from '@payloadcms/translations/languages/en';
 import {ru} from '@payloadcms/translations/languages/ru';
@@ -29,8 +30,7 @@ export default buildConfig({
 		},
 	},
 	collections: [Users, Media, Pages],
-	globals: [],
-	blocks: [Hero],
+	globals: [Header, Footer],
 	editor: lexicalEditor(),
 	secret: process.env.PAYLOAD_SECRET || '',
 	typescript: {
@@ -57,4 +57,6 @@ export default buildConfig({
 		fallback: true,
 	},
 	email: nodemailerAdapter(mailConfig),
+	cors: ['http://localhost:4321'],
+	csrf: ['http://localhost:4321'],
 });

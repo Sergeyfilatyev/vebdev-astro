@@ -11,6 +11,9 @@ interface Page {
 
 interface Props {
 	page: Page;
+	header?: any;
+	footer?: any;
+	locale: string;
 }
 
 export async function getStaticPaths() {
@@ -20,6 +23,32 @@ export async function getStaticPaths() {
 	const cmsUrl = import.meta.env.CMS_URL || 'http://localhost:3000';
 
 	const paths: any = [];
+
+	// Получаем глобальные данные для всех языков
+	const globalsData: any = {};
+
+	for (const lang of langs) {
+		try {
+			// Получаем header
+			const headerResponse = await fetch(
+				`${cmsUrl}/api/globals/header?locale=${lang}`
+			);
+			const headerData = headerResponse.ok ? await headerResponse.json() : null;
+
+			// Получаем footer
+			const footerResponse = await fetch(
+				`${cmsUrl}/api/globals/footer?locale=${lang}`
+			);
+			const footerData = footerResponse.ok ? await footerResponse.json() : null;
+
+			globalsData[lang] = {
+				header: headerData,
+				footer: footerData,
+			};
+		} catch (e) {
+			console.error(`[Error] Could not fetch globals for ${lang}:`, e);
+		}
+	}
 
 	for (const lang of langs) {
 		try {
@@ -55,6 +84,9 @@ export async function getStaticPaths() {
 							...page,
 							locale: lang,
 						},
+						header: globalsData[lang]?.header,
+						footer: globalsData[lang]?.footer,
+						locale: lang,
 					},
 				});
 			});
@@ -65,9 +97,13 @@ export async function getStaticPaths() {
 	return paths;
 }
 
-const {page} = Astro.props;
+const {page, header, footer, locale} = Astro.props;
 ---
 
-<BaseLayout title={page.title}>
+<BaseLayout
+	title={page.title}
+	header={header}
+	footer={footer}
+	locale={locale}>
 	<BlockRenderer blocks={page.blocks} />
 </BaseLayout>

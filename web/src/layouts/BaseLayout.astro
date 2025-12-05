@@ -1,9 +1,18 @@
 ---
 import '../styles/global.css';
-const {title = 'Veb-Dev'} = Astro.props;
+import Header from '@/components/global/Header.astro';
+
+interface Props {
+	title?: string;
+	header?: any;
+	footer?: any;
+	locale?: string;
+}
+
+const {title = 'Veb-Dev', header, footer, locale = 'uk'} = Astro.props;
 ---
 
-<html lang='ru'>
+<html lang={locale}>
 	<head>
 		<meta charset='utf-8' />
 		<meta
@@ -18,10 +27,10 @@ const {title = 'Veb-Dev'} = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<header>хедер</header>
-        <main>
-            <slot />
-        </main>
-        <footer>футер</footer>
+		<Header header={header} />
+		<main>
+			<slot />
+		</main>
+		<footer>футер</footer>
 	</body>
 </html>

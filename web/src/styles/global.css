@@ -1,1 +1,54 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+@import './fonts.css';
+
+@layer base {
+	body {
+		@apply bg-primary-900 text-primary-50 font-roboto min-h-screen flex flex-col justify-between;
+	}
+	button {
+		@apply cursor-pointer;
+	}
+	a {
+		@apply text-inherit;
+	}
+}
+@theme {
+	--font-roboto: 'Roboto Condensed', Arial, sans-serif;
+	--breakpoint-xs: 480px;
+	--color-primary-50: #ffffff;
+	--color-primary-100: #f1f1f1;
+	--color-primary-150: #c9c9c9;
+	--color-primary-200: #f9f661;
+	--color-primary-300: #ffcc00;
+	--color-primary-400: #fc0000;
+	--color-primary-500: #00c832;
+	--color-primary-600: #007804;
+	--color-primary-700: #2e2d2d;
+	--color-primary-800: #041308;
+	--color-primary-850: #010603;
+	--color-primary-900: #000000;
+}
+@utility container {
+	margin-inline: auto;
+	padding-inline: 10px;
+}
+@layer utilities {
+	.rotate-on-group-open {
+		transition: rotate 0.2s ease-in-out;
+	}
+	.group[open] .rotate-on-group-open {
+		rotate: 180deg;
+	}
+	.visually-hidden {
+		position: absolute !important;
+		width: 1px !important;
+		height: 1px !important;
+		margin: -1px !important;
+		padding: 0 !important;
+		border: 0 !important;
+		white-space: nowrap !important;
+		clip: rect(0 0 0 0) !important;
+		clip-path: inset(100%) !important;
+		overflow: hidden !important;
+	}
+}
