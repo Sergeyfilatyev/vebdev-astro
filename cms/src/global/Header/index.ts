@@ -3,17 +3,28 @@ import {GlobalConfig} from 'payload';
 export const Header: GlobalConfig = {
 	slug: 'header',
 	access: {
-		read: () => true, // Публичный доступ на чтение
+		read: () => true,
 	},
+	label: {en: 'Header', ru: 'Хедер', uk: 'Хедер'},
 	fields: [
-		{
-			name: 'title',
-			type: 'text',
-		},
 		{
 			name: 'logo',
 			type: 'upload',
 			relationTo: 'media',
+		},
+		{
+			name: 'navItems',
+			type: 'array',
+			fields: [
+				{
+					name: 'label',
+					type: 'text',
+				},
+				{
+					name: 'link',
+					type: 'text',
+				},
+			],
 		},
 	],
 };
