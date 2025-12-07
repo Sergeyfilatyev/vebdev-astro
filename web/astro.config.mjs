@@ -12,4 +12,9 @@ export default defineConfig({
   integrations: [
     icon()
   ],
+  trailingSlash: 'never',
+  redirects: {
+    '/uk': '/',
+    '/uk/[...path]': '/[...path]',
+  }
 });

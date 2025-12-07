@@ -1,9 +1,15 @@
 ---
 import {Icon} from 'astro-icon/components';
 import Button from '@/components/ui/Button.astro';
+import {getLocalizedLink} from '@/utils/getLocalizedLink';
 
-const {header} = Astro.props;
-console.log('Header data:', header);
+const {settings, locale} = Astro.props;
+console.log('Current Locale:', locale);
+
+const logotipUrl =
+	settings?.headerLogo?.sizes?.thumbnail.url ||
+	settings?.headerLogo.url ||
+	null;
 ---
 
 <header
@@ -12,18 +18,32 @@ console.log('Header data:', header);
 	<div class='container flex items-center justify-between gap-2 py-2 px-3'>
 		<a
 			class='flex items-center gap-2 transition-transform duration-300 active:scale-105 hover:scale-105'
-			aria-label={header?.title || "Veb-Dev's Logo"}
-			href='/'>
+			aria-label={settings.headerMenu?.[0] || 'Veb-Dev Home'}
+			href={getLocalizedLink('/', locale)}>
 			{
-				header?.logo?.url && (
+				settings?.headerLogo && (
 					<img
-						src={header.logo.url}
-						alt={header.logo.alt || header?.title || 'Logo'}
+						src={logotipUrl}
+						alt={settings.headerLogo.alt || 'Logo'}
 						class='h-12 w-auto'
 					/>
 				)
 			}
-			{header?.title && <span class='text-xl font-bold'>{header.title}</span>}
 		</a>
+		<nav>
+			<ul class='flex gap-4'>
+				{
+					settings?.headerMenu?.map((menuItem: any) => (
+						<li>
+							<a
+								href={getLocalizedLink(menuItem.link, locale)}
+								class='text-primary-100 hover:text-primary-300 transition-colors duration-300'>
+								{menuItem.label}
+							</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
 	</div>
 </header>

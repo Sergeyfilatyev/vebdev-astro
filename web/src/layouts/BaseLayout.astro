@@ -7,9 +7,10 @@ interface Props {
 	header?: any;
 	footer?: any;
 	locale?: string;
+	settings?: any;
 }
 
-const {title = 'Veb-Dev', header, footer, locale = 'uk'} = Astro.props;
+const {title = 'Veb-Dev', locale = 'uk', settings} = Astro.props;
 ---
 
 <html lang={locale}>
@@ -27,7 +28,7 @@ const {title = 'Veb-Dev', header, footer, locale = 'uk'} = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<Header header={header} />
+		<Header settings={settings} locale={locale} />
 		<main>
 			<slot />
 		</main>

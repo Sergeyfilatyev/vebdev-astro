@@ -13,43 +13,38 @@ interface Props {
 	page: Page;
 	header?: any;
 	footer?: any;
+	settings?: any; // Глобальные настройки
 	locale: string;
 }
 
 export async function getStaticPaths() {
-	// 1. Переменные внутри функции (как мы и договорились)
 	const langs = ['en', 'ru', 'uk'];
 	const defaultLang = 'uk';
 	const cmsUrl = import.meta.env.CMS_URL || 'http://localhost:3000';
-
 	const paths: any = [];
 
-	// Получаем глобальные данные для всех языков
 	const globalsData: any = {};
 
+	// 1. Получение Глобальных настроек (Header, Footer, Settings)
 	for (const lang of langs) {
 		try {
-			// Получаем header
-			const headerResponse = await fetch(
-				`${cmsUrl}/api/globals/header?locale=${lang}`
+			// Получаем GeneralSettings
+			const settingsResponse = await fetch(
+				`${cmsUrl}/api/globals/general-settings?locale=${lang}`
 			);
-			const headerData = headerResponse.ok ? await headerResponse.json() : null;
-
-			// Получаем footer
-			const footerResponse = await fetch(
-				`${cmsUrl}/api/globals/footer?locale=${lang}`
-			);
-			const footerData = footerResponse.ok ? await footerResponse.json() : null;
+			const settingsData = settingsResponse.ok
+				? await settingsResponse.json()
+				: null;
 
 			globalsData[lang] = {
-				header: headerData,
-				footer: footerData,
+				settings: settingsData, // Сохраняем настройки
 			};
 		} catch (e) {
 			console.error(`[Error] Could not fetch globals for ${lang}:`, e);
 		}
 	}
 
+	// 2. Получение Страниц и Генерация Путей
 	for (const lang of langs) {
 		try {
 			const response = await fetch(
@@ -60,36 +55,39 @@ export async function getStaticPaths() {
 				console.error(
 					`[Payload CMS Error] Failed to fetch pages for locale: ${lang}`
 				);
-				continue;
+				continue; 
 			}
 
-			const {docs: pages} = await response.json();
+			const data = await response.json();
+			const pages = data.docs || [];
 
-			pages.forEach((page: any) => {
-				const slugParts = [];
-				if (lang !== defaultLang) {
-					slugParts.push(lang);
-				}
-				if (page.slug && page.slug !== 'home') {
-					slugParts.push(page.slug);
-				}
-				const slugString = slugParts.join('/');
+			if (pages.length > 0) {
+				pages.forEach((page: any) => {
+					const slugParts = [];
+					if (lang !== defaultLang) {
+						slugParts.push(lang);
+					}
+					if (page.slug && page.slug !== 'home') {
+						slugParts.push(page.slug);
+					}
 
-				paths.push({
-					params: {
-						slug: slugString || undefined,
-					},
-					props: {
-						page: {
-							...page,
+					const slugString = slugParts.join('/');
+
+					paths.push({
+						params: {
+							slug: slugString || undefined,
+						},
+						props: {
+							page: {
+								...page,
+								locale: lang,
+							},
+							settings: globalsData[lang]?.settings, 
 							locale: lang,
 						},
-						header: globalsData[lang]?.header,
-						footer: globalsData[lang]?.footer,
-						locale: lang,
-					},
+					});
 				});
-			});
+			}
 		} catch (e) {
 			console.error(`[Error] Could not fetch data for ${lang}:`, e);
 		}
@@ -97,13 +95,12 @@ export async function getStaticPaths() {
 	return paths;
 }
 
-const {page, header, footer, locale} = Astro.props;
+const {page, settings, locale} = Astro.props;
 ---
 
 <BaseLayout
 	title={page.title}
-	header={header}
-	footer={footer}
+	settings={settings}
 	locale={locale}>
 	<BlockRenderer blocks={page.blocks} />
 </BaseLayout>

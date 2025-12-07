@@ -9,8 +9,8 @@ import sharp from 'sharp';
 import {Users} from './collections/Users';
 import {Media} from './collections/Media';
 import {Pages} from './collections/Pages';
-import {Header} from './global/Header';
-import {Footer} from './global/Footer';
+import { GeneralSettings } from './global/GeneralSettings';
+
 
 import {en} from '@payloadcms/translations/languages/en';
 import {ru} from '@payloadcms/translations/languages/ru';
@@ -30,7 +30,7 @@ export default buildConfig({
 		},
 	},
 	collections: [Users, Media, Pages],
-	globals: [Header, Footer],
+	globals: [GeneralSettings],
 	editor: lexicalEditor(),
 	secret: process.env.PAYLOAD_SECRET || '',
 	typescript: {
@@ -50,13 +50,19 @@ export default buildConfig({
 	localization: {
 		locales: [
 			{label: 'English', code: 'en'},
-			{label: 'Russian', code: 'ru'},
-			{label: 'Ukrainian', code: 'uk'},
+			{label: 'Русский', code: 'ru'},
+			{label: 'Українська', code: 'uk'},
 		],
 		defaultLocale: 'uk',
 		fallback: true,
 	},
 	email: nodemailerAdapter(mailConfig),
-	cors: ['http://localhost:4321'],
-	csrf: ['http://localhost:4321'],
+	cors: [
+		'http://localhost:3000', // Админка Payload
+		'http://localhost:4321', // Фронтенд Astro
+	],
+	csrf: [
+		'http://localhost:3000', // Админка Payload
+		'http://localhost:4321', // Фронтенд Astro
+	],
 });

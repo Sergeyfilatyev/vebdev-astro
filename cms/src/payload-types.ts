@@ -90,12 +90,10 @@ export interface Config {
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'ru' | 'uk') | ('en' | 'ru' | 'uk')[];
   globals: {
-    header: Header;
-    footer: Footer;
+    'general-settings': GeneralSetting;
   };
   globalsSelect: {
-    header: HeaderSelect<false> | HeaderSelect<true>;
-    footer: FooterSelect<false> | FooterSelect<true>;
+    'general-settings': GeneralSettingsSelect<false> | GeneralSettingsSelect<true>;
   };
   locale: 'en' | 'ru' | 'uk';
   user: User & {
@@ -169,6 +167,64 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    xlarge?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -348,6 +404,80 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        square?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        xlarge?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -428,56 +558,134 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header".
+ * via the `definition` "general-settings".
  */
-export interface Header {
+export interface GeneralSetting {
   id: number;
-  logo?: (number | null) | Media;
-  navItems?:
+  headerLogo: number | Media;
+  footerLogo?: (number | null) | Media;
+  footerCopyright?: string | null;
+  headerMenu?:
+    | {
+        label: string;
+        link: string;
+        visibility: 'all' | 'desktop' | 'mobile';
+        id?: string | null;
+      }[]
+    | null;
+  footerMenu?:
     | {
         label?: string | null;
         link?: string | null;
         id?: string | null;
       }[]
     | null;
+  email?: {
+    label?: string | null;
+    value?: string | null;
+  };
+  phone?: {
+    label?: string | null;
+    value?: string | null;
+  };
+  address?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  telegram?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  whatsapp?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  viber?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  instagram?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  facebook?: {
+    label?: string | null;
+    url?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "footer".
+ * via the `definition` "general-settings_select".
  */
-export interface Footer {
-  id: number;
-  text?: string | null;
-  copyright?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "header_select".
- */
-export interface HeaderSelect<T extends boolean = true> {
-  logo?: T;
-  navItems?:
+export interface GeneralSettingsSelect<T extends boolean = true> {
+  headerLogo?: T;
+  footerLogo?: T;
+  footerCopyright?: T;
+  headerMenu?:
+    | T
+    | {
+        label?: T;
+        link?: T;
+        visibility?: T;
+        id?: T;
+      };
+  footerMenu?:
     | T
     | {
         label?: T;
         link?: T;
         id?: T;
       };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "footer_select".
- */
-export interface FooterSelect<T extends boolean = true> {
-  text?: T;
-  copyright?: T;
+  email?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+      };
+  phone?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+      };
+  address?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  telegram?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  whatsapp?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  viber?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  instagram?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  facebook?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
