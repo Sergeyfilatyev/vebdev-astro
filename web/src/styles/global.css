@@ -3,7 +3,7 @@
 
 @layer base {
 	body {
-		@apply bg-primary-900 text-primary-50 font-roboto min-h-screen flex flex-col justify-between;
+		@apply bg-primary-900 text-primary-50 min-h-screen font-roboto flex flex-col justify-between;
 	}
 	button {
 		@apply cursor-pointer;

@@ -1,6 +1,7 @@
 import {CollectionConfig} from 'payload';
 import {Hero} from '@/blocks/Hero';
 import {Content} from '@/blocks/Content';
+import { MediaBlock } from '@/blocks/MediaBlock';
 
 export const Pages: CollectionConfig = {
 	slug: 'pages',
@@ -29,6 +30,19 @@ export const Pages: CollectionConfig = {
 			},
 		},
 		{
+			name: 'description',
+			type: 'textarea',
+			required: true,
+			localized: true,
+			admin: {
+				description: {
+					en: 'The description of the page',
+					ru: 'Описание страницы',
+					uk: 'Опис сторінки',
+				},
+			},
+		},
+		{
 			name: 'slug',
 			type: 'text',
 			required: true,
@@ -44,7 +58,7 @@ export const Pages: CollectionConfig = {
 		{
 			name: 'blocks',
 			type: 'blocks',
-			blocks: [Hero, Content],
+			blocks: [Hero, Content, MediaBlock],
 			localized: true,
 			admin: {
 				description: {

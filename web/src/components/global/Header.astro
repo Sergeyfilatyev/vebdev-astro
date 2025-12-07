@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button.astro';
 import {getLocalizedLink} from '@/utils/getLocalizedLink';
 
 const {settings, locale} = Astro.props;
-console.log('Current Locale:', locale);
+console.log('settings', settings);
 
 const logotipUrl =
 	settings?.headerLogo?.sizes?.thumbnail.url ||
@@ -12,10 +12,32 @@ const logotipUrl =
 	null;
 ---
 
+<div
+	class='sticky top-0 z-50 flex items-center justify-center border-b border-primary-50/20 bg-primary-900'>
+	<Button
+		variant='ghost'
+		size='icon'
+		id='mobileMenuOpenBtn'
+		class='text-primary-50 w-12 h-12'
+		aria-label='Open Mobile Menu'>
+		<Icon
+			name='mdi:menu'
+			size={46}
+		/>
+	</Button>
+	<Button
+		variant='ghost'
+		size='sm'
+		id='mobileMenuOpenBtn'
+		class='text-primary-50 w-14 h-14'
+		aria-label={settings.phone.label || 'Call Us'}>
+		{settings.phone.label}
+	</Button>
+</div>
 <header
-	class='flex gap-1 bg-primary-900 w-full border-b border-primary-100/20'
+	class='flex flex-col gap-1 bg-primary-900 w-full p-2'
 	id='header'>
-	<div class='container flex items-center justify-between gap-2 py-2 px-3'>
+	<div class='container flex items-center justify-between gap-2'>
 		<a
 			class='flex items-center gap-2 transition-transform duration-300 active:scale-105 hover:scale-105'
 			aria-label={settings.headerMenu?.[0] || 'Veb-Dev Home'}
@@ -25,12 +47,12 @@ const logotipUrl =
 					<img
 						src={logotipUrl}
 						alt={settings.headerLogo.alt || 'Logo'}
-						class='h-12 w-auto'
+						class='w-24 lg:w-32 h-auto object-contain'
 					/>
 				)
 			}
 		</a>
-		<nav>
+		<!-- <nav class='hidden lg:flex'>
 			<ul class='flex gap-4'>
 				{
 					settings?.headerMenu?.map((menuItem: any) => (
@@ -44,6 +66,82 @@ const logotipUrl =
 					))
 				}
 			</ul>
-		</nav>
+		</nav> -->
+		<div class='flex items-center gap-2'>
+			<Button
+				variant='secondary'
+				size='sm'
+				id='mobileMenuOpenBtn'
+				class='text-primary-50 hidden xs:inline-block'
+				aria-label={settings.buttonCTA || 'Free Consultation'}>
+				{settings.buttonCTA || 'Free Consultation'}
+			</Button>
+			<Button
+				variant='outline'
+				size='sm'
+				id='mobileMenuOpenBtn'
+				class='text-primary-50 hidden xs:inline-block'
+				aria-label={settings.telegram.label || 'Write to Telegram'}>
+				{settings.telegram.label || 'Write to Telegram'}
+			</Button>
+		</div>
+		<div class='flex items-center gap-1 text-xs'>
+			{
+				locale === 'ru' ? (
+					<span
+						title='Поточний язык'
+						class=' text-primary-100 '>
+						RU
+					</span>
+				) : (
+					<Button
+						size='auto'
+						variant='ghost'
+						isLink
+						href={getLocalizedLink('/', 'ru')}
+						class=' text-primary-500 text-xs '>
+						RU
+					</Button>
+				)
+			}
+			<span class='text-primary-500'>|</span>
+			{
+				locale === 'uk' ? (
+					<span
+						title='Поточний язык'
+						class=' text-primary-100 '>
+						UA
+					</span>
+				) : (
+					<Button
+						size='auto'
+						variant='ghost'
+						isLink
+						href={getLocalizedLink('/', 'uk')}
+						class=' text-primary-500 text-xs '>
+						UA
+					</Button>
+				)
+			}
+			<span class='text-primary-500'>|</span>
+			{
+				locale === 'en' ? (
+					<span
+						title='Поточний язык'
+						class='text-primary-100 '>
+						EN
+					</span>
+				) : (
+					<Button
+						size='auto'
+						variant='ghost'
+						isLink
+						href={getLocalizedLink('/', 'en')}
+						class=' text-primary-500 text-xs '>
+						EN
+					</Button>
+				)
+			}
+		</div>
 	</div>
 </header>

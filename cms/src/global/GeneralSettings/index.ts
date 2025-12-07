@@ -46,6 +46,16 @@ export const GeneralSettings: GlobalConfig = {
 							localized: true,
 							defaultValue: '© 2025 Veb-Dev. All rights reserved.',
 						},
+						{
+							name: 'buttonCTA',
+							label: {
+								en: 'Button CTA Text',
+								ru: 'Текст кнопки CTA',
+								uk: 'Текст кнопки CTA',
+							},
+							type: 'text',
+							localized: true,
+						},
 					],
 				},
 

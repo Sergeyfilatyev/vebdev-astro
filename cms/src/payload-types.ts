@@ -237,13 +237,17 @@ export interface Page {
    */
   title: string;
   /**
+   * The description of the page
+   */
+  description: string;
+  /**
    * The slug of the page
    */
   slug: string;
   /**
    * The blocks of the page
    */
-  blocks?: (Hero | ContentBlock)[] | null;
+  blocks?: (Hero | ContentBlock | MediaBlock)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -252,12 +256,12 @@ export interface Page {
  * via the `definition` "Hero".
  */
 export interface Hero {
-  /**
-   * The title of the hero
-   */
+  titleBrand?: string | null;
   title: string;
-  text?: string | null;
-  type?: ('simple' | 'video') | null;
+  subtitle?: string | null;
+  paragraph?: string | null;
+  buttonText?: string | null;
+  type?: ('right' | 'left' | 'center') | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'hero';
@@ -286,6 +290,16 @@ export interface ContentBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'content';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock".
+ */
+export interface MediaBlock {
+  media: number | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'mediaBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -485,12 +499,14 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  description?: T;
   slug?: T;
   blocks?:
     | T
     | {
         hero?: T | HeroSelect<T>;
         content?: T | ContentBlockSelect<T>;
+        mediaBlock?: T | MediaBlockSelect<T>;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -500,8 +516,11 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "Hero_select".
  */
 export interface HeroSelect<T extends boolean = true> {
+  titleBrand?: T;
   title?: T;
-  text?: T;
+  subtitle?: T;
+  paragraph?: T;
+  buttonText?: T;
   type?: T;
   id?: T;
   blockName?: T;
@@ -513,6 +532,15 @@ export interface HeroSelect<T extends boolean = true> {
 export interface ContentBlockSelect<T extends boolean = true> {
   body?: T;
   body_html?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MediaBlock_select".
+ */
+export interface MediaBlockSelect<T extends boolean = true> {
+  media?: T;
   id?: T;
   blockName?: T;
 }
@@ -565,6 +593,7 @@ export interface GeneralSetting {
   headerLogo: number | Media;
   footerLogo?: (number | null) | Media;
   footerCopyright?: string | null;
+  buttonCTA?: string | null;
   headerMenu?:
     | {
         label: string;
@@ -623,6 +652,7 @@ export interface GeneralSettingsSelect<T extends boolean = true> {
   headerLogo?: T;
   footerLogo?: T;
   footerCopyright?: T;
+  buttonCTA?: T;
   headerMenu?:
     | T
     | {
