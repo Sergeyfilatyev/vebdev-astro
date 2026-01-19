@@ -1,4 +1,4 @@
-export default function getLocalizedLink(link: string, currentLocale: string): string {
+export default function getLocalizedLink(link, currentLocale) {
 	const defaultLang = 'uk';
 	if (link === '/') {
 		if (currentLocale !== defaultLang) {

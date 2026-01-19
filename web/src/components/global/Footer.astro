@@ -1,0 +1,201 @@
+---
+import {Icon} from 'astro-icon/components';
+
+// @ts-ignore - Astro is a global in Astro components
+const {settings, locale} = Astro.props;
+
+const getLocalizedLink = (link: string, currentLocale: string): string => {
+	const defaultLang = 'uk';
+	if (link === '/') {
+		if (currentLocale !== defaultLang) {
+			return `/${currentLocale}`;
+		}
+		return '/';
+	}
+
+	if (link.startsWith('/') || link.includes('://')) {
+		return link;
+	}
+
+	if (currentLocale === defaultLang) {
+		return `/${link}`;
+	} else {
+		return `/${currentLocale}/${link}`;
+	}
+};
+
+const navigation = settings?.navigation || [];
+const socialLinks = settings?.socialLinks || [];
+const email = settings?.email || '';
+const phone = settings?.phone || '';
+const address = settings?.address || '';
+const copyright =
+	settings?.copyright ||
+	`© ${new Date().getFullYear()} Veb-Dev. Всі права захищені.`;
+---
+
+<footer class='bg-primary-900 border-t border-primary-700'>
+	<div class='container px-4 py-12'>
+		<div class='grid md:grid-cols-4 gap-8 mb-8'>
+			<!-- Logo & Description -->
+			<div class='md:col-span-1'>
+				<a
+					href={getLocalizedLink('/', locale)}
+					class='inline-block mb-4'>
+					{
+						(settings?.footerLogo || settings?.logo) && (
+							<img
+								src={
+									settings.footerLogo?.url ||
+									settings.footerLogo?.sizes?.thumbnail?.url ||
+									settings.logo?.url ||
+									settings.logo?.sizes?.thumbnail?.url
+								}
+								alt={settings.footerLogo?.alt || settings.logo?.alt || 'Logo'}
+								class='h-12 w-auto'
+							/>
+						)
+					}
+				</a>
+				{
+					settings?.companyInfo && (
+						<div class='text-sm text-primary-150 prose prose-invert prose-sm max-w-none'>
+							{typeof settings.companyInfo === 'string' ? (
+								<p set:html={settings.companyInfo} />
+							) : (
+								<p>{settings.companyInfo}</p>
+							)}
+						</div>
+					)
+				}
+			</div>
+
+			<!-- Navigation -->
+			{
+				navigation.length > 0 && (
+					<div>
+						<h3 class='text-lg font-bold text-primary-50 mb-4'>Навігація</h3>
+						<nav>
+							<ul class='space-y-2'>
+								{navigation.map((item: any) => (
+									<li>
+										<a
+											href={getLocalizedLink(item.url, locale)}
+											class='text-primary-150 hover:text-primary-200 transition-colors'>
+											{item.label}
+										</a>
+									</li>
+								))}
+							</ul>
+						</nav>
+					</div>
+				)
+			}
+
+			<!-- Contacts -->
+			<div>
+				<h3 class='text-lg font-bold text-primary-50 mb-4'>Контакти</h3>
+				<ul class='space-y-3 text-sm text-primary-150'>
+					{
+						email && (
+							<li class='flex items-center gap-2'>
+								<div class='text-primary-500'>
+									<Icon name='mdi:email' />
+								</div>
+								<a
+									href={`mailto:${email}`}
+									class='hover:text-primary-200 transition-colors'>
+									{email}
+								</a>
+							</li>
+						)
+					}
+					{
+						phone && (
+							<li class='flex items-center gap-2'>
+								<div class='text-primary-500'>
+									<Icon name='mdi:phone' />
+								</div>
+								<a
+									href={`tel:${phone}`}
+									class='hover:text-primary-200 transition-colors'>
+									{phone}
+								</a>
+							</li>
+						)
+					}
+					{
+						address && (
+							<li class='flex items-start gap-2'>
+								<div class='text-primary-500 mt-1'>
+									<Icon name='mdi:map-marker' />
+								</div>
+								<span>{address}</span>
+							</li>
+						)
+					}
+				</ul>
+			</div>
+
+			<!-- Social Media -->
+			{
+				socialLinks.length > 0 && (
+					<div>
+						<h3 class='text-lg font-bold text-primary-50 mb-4'>
+							Соціальні мережі
+						</h3>
+						<ul class='flex flex-wrap gap-3'>
+							{socialLinks.map((link: any) => (
+								<li>
+									<a
+										href={link.url}
+										target='_blank'
+										rel='noopener noreferrer'
+										class='w-10 h-10 flex items-center justify-center bg-primary-850 rounded-lg hover:bg-primary-700 transition-colors'
+										aria-label={link.label || link.platform}>
+										{link.platform === 'telegram' && (
+											<div class='text-xl'>
+												<Icon name='mdi:telegram' />
+											</div>
+										)}
+										{link.platform === 'whatsapp' && (
+											<div class='text-xl'>
+												<Icon name='mdi:whatsapp' />
+											</div>
+										)}
+										{link.platform === 'viber' && (
+											<div class='text-xl'>
+												<Icon name='mdi:message-text' />
+											</div>
+										)}
+										{link.platform === 'instagram' && (
+											<div class='text-xl'>
+												<Icon name='mdi:instagram' />
+											</div>
+										)}
+										{link.platform === 'facebook' && (
+											<div class='text-xl'>
+												<Icon name='mdi:facebook' />
+											</div>
+										)}
+										{link.platform === 'linkedin' && (
+											<div class='text-xl'>
+												<Icon name='mdi:linkedin' />
+											</div>
+										)}
+									</a>
+								</li>
+							))}
+						</ul>
+					</div>
+				)
+			}
+		</div>
+
+		<!-- Copyright -->
+		<div
+			class='pt-8 border-t border-primary-700 text-center text-sm text-primary-150'>
+			{copyright}
+		</div>
+	</div>
+</footer>

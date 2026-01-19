@@ -1,0 +1,169 @@
+---
+import {Icon} from 'astro-icon/components';
+
+// @ts-ignore - Astro is a global in Astro components
+const {title, subtitle, advantages} = Astro.props;
+---
+
+<section class='relative py-24 md:py-32 overflow-hidden'>
+	<div
+		class='absolute inset-0 bg-linear-to-b from-primary-900/50 via-primary-800/30 to-primary-900/50'>
+	</div>
+
+	<div class='container px-4 relative z-10'>
+		{
+			title && (
+				<h2 class='text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 fade-in-up'>
+					<span class='gradient-text'>{title}</span>
+				</h2>
+			)
+		}
+		{
+			subtitle && (
+				<p class='text-lg md:text-xl text-center text-primary-150 mb-16 max-w-2xl mx-auto fade-in-up fade-in-delay-1'>
+					{subtitle}
+				</p>
+			)
+		}
+
+		{
+			advantages && advantages.length > 0 && (
+				<div class='advantages-slider-wrapper'>
+					<div class='swiper advantages-swiper'>
+						<div class='swiper-wrapper'>
+							{advantages.map((advantage: any, index: number) => (
+								<div
+									class='swiper-slide'
+									style={`animation-delay: ${index * 0.1}s`}>
+									<div class='group relative h-full bg-linear-to-br from-primary-850/80 via-primary-800/60 to-primary-850/80 backdrop-blur-sm p-8 rounded-2xl border border-primary-700/30 hover:border-primary-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-2'>
+										<div class='absolute inset-0 bg-linear-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/10 group-hover:to-transparent rounded-2xl transition-all duration-500' />
+
+										<div class='relative z-10'>
+											{advantage.icon && (
+												<div class='text-6xl mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 flex items-center justify-center'>
+													{advantage.icon.startsWith('twemoji:') ||
+													advantage.icon.startsWith('mdi:') ? (
+														<Icon name={advantage.icon} />
+													) : (
+														<span>{advantage.icon}</span>
+													)}
+												</div>
+											)}
+											{advantage.title && (
+												<h3 class='text-2xl md:text-3xl font-bold text-primary-50 mb-4 group-hover:text-primary-200 transition-colors'>
+													{advantage.title}
+												</h3>
+											)}
+											{advantage.description && (
+												<p class='text-primary-150 mb-6 leading-relaxed'>
+													{advantage.description}
+												</p>
+											)}
+											{advantage.points && advantage.points.length > 0 && (
+												<ul class='space-y-3'>
+													{advantage.points.map((point: any) => (
+														<li class='flex items-start gap-3 text-primary-100'>
+															<span class='text-primary-500 mt-1 text-xl font-bold'>
+																→
+															</span>
+															<span>{point.point}</span>
+														</li>
+													))}
+												</ul>
+											)}
+										</div>
+									</div>
+								</div>
+							))}
+						</div>
+						<div class='swiper-pagination advantages-pagination mt-8' />
+						<div class='swiper-button-next advantages-next' />
+						<div class='swiper-button-prev advantages-prev' />
+					</div>
+				</div>
+			)
+		}
+	</div>
+</section>
+
+<script>
+	import {Swiper} from 'swiper';
+	import {Navigation, Pagination, Autoplay} from 'swiper/modules';
+	import 'swiper/css';
+	import 'swiper/css/navigation';
+	import 'swiper/css/pagination';
+
+	const advantagesSwiperEl = document.querySelector('.advantages-swiper');
+	if (advantagesSwiperEl) {
+		new Swiper('.advantages-swiper', {
+			modules: [Navigation, Pagination, Autoplay],
+			slidesPerView: 1,
+			spaceBetween: 24,
+			loop: true,
+			autoplay: {
+				delay: 5000,
+				disableOnInteraction: false,
+			},
+			breakpoints: {
+				640: {
+					slidesPerView: 2,
+				},
+				1024: {
+					slidesPerView: 3,
+				},
+			},
+			navigation: {
+				nextEl: '.advantages-next',
+				prevEl: '.advantages-prev',
+			},
+			pagination: {
+				el: '.advantages-pagination',
+				clickable: true,
+			},
+		});
+	}
+</script>
+
+<style>
+	.advantages-swiper {
+		padding-bottom: 60px;
+	}
+
+	.advantages-next,
+	.advantages-prev {
+		color: var(--color-primary-500) !important;
+		width: 48px !important;
+		height: 48px !important;
+		margin-top: -24px !important;
+		top: 50% !important;
+		z-index: 10 !important;
+		opacity: 0.8;
+		transition: opacity 0.3s ease;
+	}
+
+	.advantages-next:hover,
+	.advantages-prev:hover {
+		opacity: 1;
+	}
+
+	.advantages-next::after,
+	.advantages-prev::after {
+		font-size: 24px !important;
+		font-weight: 700 !important;
+	}
+
+	.advantages-pagination .swiper-pagination-bullet {
+		background: var(--color-primary-700);
+		opacity: 0.5;
+		width: 12px;
+		height: 12px;
+		transition: all 0.3s ease;
+	}
+
+	.advantages-pagination .swiper-pagination-bullet-active {
+		background: var(--color-primary-500);
+		opacity: 1;
+		width: 32px;
+		border-radius: 6px;
+	}
+</style>

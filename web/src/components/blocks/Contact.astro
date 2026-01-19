@@ -1,0 +1,198 @@
+---
+import Button from '../ui/Button.astro';
+
+const {
+	title,
+	subtitle,
+	showNameField = true,
+	showEmailField = true,
+	showPhoneField = true,
+	showMessageField = true,
+	buttonText = 'Відправити',
+	policyText,
+	policyLink = '/privacy-policy',
+	successMessage = 'Дякуємо! Ми зв\'яжемося з вами найближчим часом.',
+} = Astro.props;
+
+const locale = Astro.props.locale || 'uk';
+const cmsUrl = import.meta.env.CMS_URL || 'http://localhost:3000';
+
+const getLocalizedLink = (link: string, currentLocale: string): string => {
+	const defaultLang = 'uk';
+	if (link === '/') {
+		if (currentLocale !== defaultLang) {
+			return `/${currentLocale}`;
+		}
+		return '/';
+	}
+	if (link.startsWith('/') || link.includes('://')) {
+		return link;
+	}
+	if (currentLocale === defaultLang) {
+		return `/${link}`;
+	} else {
+		return `/${currentLocale}/${link}`;
+	}
+};
+---
+
+<section id='contact' class='relative py-24 md:py-32 bg-gradient-to-b from-primary-800 via-primary-900 to-primary-800 overflow-hidden'>
+	<div class='absolute inset-0 opacity-20'>
+		<div class='absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/30 rounded-full blur-3xl'></div>
+		<div class='absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-200/30 rounded-full blur-3xl'></div>
+	</div>
+
+	<div class='container px-4 relative z-10'>
+		{title && (
+			<h2 class='text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 fade-in-up'>
+				<span class='gradient-text'>{title}</span>
+			</h2>
+		)}
+		{subtitle && (
+			<p class='text-lg md:text-xl text-center text-primary-150 mb-16 max-w-2xl mx-auto fade-in-up fade-in-delay-1'>
+				{subtitle}
+			</p>
+		)}
+
+		<div class='max-w-2xl mx-auto'>
+			<form
+				class='bg-gradient-to-br from-primary-850/50 to-primary-800/30 backdrop-blur-sm p-8 md:p-12 rounded-2xl border border-primary-700/30 shadow-2xl fade-in-up fade-in-delay-2'
+				method='POST'
+				action={`${cmsUrl}/api/contact-submissions`}
+				id='contact-form'>
+				<div class='grid md:grid-cols-2 gap-6 mb-6'>
+					{showNameField && (
+						<div>
+							<label for='name' class='block text-primary-100 mb-3 font-medium'>
+								Ім'я
+							</label>
+							<input
+								type='text'
+								id='name'
+								name='name'
+								required={showNameField}
+								class='w-full px-5 py-4 bg-primary-900/50 border border-primary-700/50 rounded-xl text-primary-50 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300'
+								placeholder='Ваше ім'я'
+							/>
+						</div>
+					)}
+
+					{showEmailField && (
+						<div>
+							<label for='email' class='block text-primary-100 mb-3 font-medium'>
+								Email
+							</label>
+							<input
+								type='email'
+								id='email'
+								name='email'
+								required={showEmailField}
+								class='w-full px-5 py-4 bg-primary-900/50 border border-primary-700/50 rounded-xl text-primary-50 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300'
+								placeholder='your@email.com'
+							/>
+						</div>
+					)}
+				</div>
+
+				{showPhoneField && (
+					<div class='mb-6'>
+						<label for='phone' class='block text-primary-100 mb-3 font-medium'>
+							Телефон
+						</label>
+						<input
+							type='tel'
+							id='phone'
+							name='phone'
+							required={showPhoneField}
+							class='w-full px-5 py-4 bg-primary-900/50 border border-primary-700/50 rounded-xl text-primary-50 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300'
+							placeholder='+380 (XX) XXX-XX-XX'
+						/>
+					</div>
+				)}
+
+				{showMessageField && (
+					<div class='mb-8'>
+						<label for='message' class='block text-primary-100 mb-3 font-medium'>
+							Повідомлення
+						</label>
+						<textarea
+							id='message'
+							name='message'
+							rows='5'
+							required={showMessageField}
+							class='w-full px-5 py-4 bg-primary-900/50 border border-primary-700/50 rounded-xl text-primary-50 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all duration-300 resize-none'
+							placeholder='Ваше повідомлення...'
+						></textarea>
+					</div>
+				)}
+
+				<div class='flex flex-col items-center gap-6'>
+					<Button
+						type='submit'
+						variant='primary'
+						size='lg'
+						class='min-w-[240px] glow-effect text-lg px-8 py-4'>
+						{buttonText}
+					</Button>
+
+					{policyText && policyLink && (
+						<p class='text-sm text-primary-150 text-center'>
+							{policyText}{' '}
+							<a
+								href={getLocalizedLink(policyLink, locale)}
+								class='text-primary-200 hover:text-primary-300 underline transition-colors'>
+								Політика конфіденційності
+							</a>
+						</p>
+					)}
+				</div>
+			</form>
+
+			<div
+				id='form-success'
+				class='hidden max-w-2xl mx-auto mt-6 p-6 bg-gradient-to-r from-primary-500 to-primary-600 text-primary-900 rounded-xl text-center font-bold shadow-lg fade-in'>
+				{successMessage}
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	const form = document.getElementById('contact-form');
+	const successMessage = document.getElementById('form-success');
+
+	if (form) {
+		form.addEventListener('submit', async (e) => {
+			e.preventDefault();
+
+			const formData = new FormData(form);
+			const data = Object.fromEntries(formData);
+
+			try {
+				const response = await fetch(
+					`${import.meta.env.CMS_URL || 'http://localhost:3000'}/api/contact-submissions`,
+					{
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+						},
+						body: JSON.stringify(data),
+					}
+				);
+
+				if (response.ok) {
+					form.reset();
+					if (successMessage) {
+						successMessage.classList.remove('hidden');
+						successMessage.scrollIntoView({behavior: 'smooth', block: 'center'});
+					}
+				} else {
+					alert('Помилка відправки форми. Спробуйте ще раз.');
+				}
+			} catch (error) {
+				console.error('Form submission error:', error);
+				alert('Помилка відправки форми. Спробуйте ще раз.');
+			}
+		});
+	}
+</script>

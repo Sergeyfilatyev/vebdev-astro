@@ -1,20 +1,47 @@
 ---
 import Hero from './blocks/Hero.astro';
 import Content from './blocks/Content.astro';
+import MediaBlock from './blocks/MediaBlock.astro';
+import Advantages from './blocks/Advantages.astro';
+import Services from './blocks/Services.astro';
+import Portfolio from './blocks/Portfolio.astro';
+import Steps from './blocks/Steps.astro';
+import FAQ from './blocks/FAQ.astro';
+import Stats from './blocks/Stats.astro';
+import Contact from './blocks/Contact.astro';
 
-const {blocks} = Astro.props;
+// @ts-ignore - Astro is a global in Astro components
+const {blocks, locale} = Astro.props;
 ---
 
 {
 	blocks?.map((block: any) => {
+		const blockProps = {...block, locale};
+
 		switch (block.blockType) {
 			case 'hero':
-				return <Hero {...block} />;
+				return <Hero {...blockProps} />;
 			case 'content':
-				return <Content {...block} />;
+				return <Content {...blockProps} />;
+			case 'mediaBlock':
+				return <MediaBlock {...blockProps} />;
+			case 'advantages':
+				return <Advantages {...blockProps} />;
+			case 'servicesBlock':
+				return <Services {...blockProps} />;
+			case 'portfolio':
+				return <Portfolio {...blockProps} />;
+			case 'stepsBlock':
+				return <Steps {...blockProps} />;
+			case 'faqBlock':
+				return <FAQ {...blockProps} />;
+			case 'stats':
+				return <Stats {...blockProps} />;
+			case 'contact':
+				return <Contact {...blockProps} />;
 			default:
 				return (
-					<div class="text-red-600 p-4 border border-red-600 my-4">
+					<div class='text-red-600 p-4 border border-red-600 my-4 container'>
 						Неизвестный блок: {block.blockType}
 					</div>
 				);

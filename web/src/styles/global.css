@@ -4,6 +4,7 @@
 @layer base {
 	body {
 		@apply bg-primary-900 text-primary-50 min-h-screen font-roboto flex flex-col justify-between;
+		scroll-behavior: smooth;
 	}
 	button {
 		@apply cursor-pointer;
@@ -11,7 +12,11 @@
 	a {
 		@apply text-inherit;
 	}
+	* {
+		@apply antialiased;
+	}
 }
+
 @theme {
 	--font-roboto: 'Roboto Condensed', Arial, sans-serif;
 	--breakpoint-xs: 480px;
@@ -28,10 +33,13 @@
 	--color-primary-850: #010603;
 	--color-primary-900: #000000;
 }
+
 @utility container {
 	margin-inline: auto;
-	padding-inline: 10px;
+	padding-inline: clamp(1rem, 5vw, 2rem);
+	max-width: 1280px;
 }
+
 @layer utilities {
 	.rotate-on-group-open {
 		transition: rotate 0.2s ease-in-out;
@@ -50,5 +58,76 @@
 		clip: rect(0 0 0 0) !important;
 		clip-path: inset(100%) !important;
 		overflow: hidden !important;
+	}
+
+	.fade-in {
+		animation: fadeIn 0.8s ease-out forwards;
+		opacity: 0;
+	}
+
+	.fade-in-up {
+		animation: fadeInUp 0.8s ease-out forwards;
+		opacity: 0;
+		transform: translateY(30px);
+	}
+
+	.fade-in-delay-1 {
+		animation-delay: 0.1s;
+	}
+
+	.fade-in-delay-2 {
+		animation-delay: 0.2s;
+	}
+
+	.fade-in-delay-3 {
+		animation-delay: 0.3s;
+	}
+
+	@keyframes fadeIn {
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes fadeInUp {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.gradient-text {
+		background: linear-gradient(
+			135deg,
+			var(--color-primary-200) 0%,
+			var(--color-primary-300) 100%
+		);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+	}
+
+	.glow-effect {
+		position: relative;
+	}
+
+	.glow-effect::before {
+		content: '';
+		position: absolute;
+		inset: -2px;
+		background: linear-gradient(
+			135deg,
+			var(--color-primary-500),
+			var(--color-primary-200)
+		);
+		border-radius: inherit;
+		opacity: 0;
+		transition: opacity 0.3s ease;
+		z-index: -1;
+		filter: blur(10px);
+	}
+
+	.glow-effect:hover::before {
+		opacity: 0.3;
 	}
 }

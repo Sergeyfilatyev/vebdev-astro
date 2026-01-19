@@ -1,0 +1,34 @@
+---
+const { media } = Astro.props;
+
+const mediaData = typeof media === 'object' ? media : null;
+const mediaUrl = mediaData?.url || mediaData?.sizes?.large?.url || mediaData?.sizes?.medium?.url || media;
+const mediaAlt = mediaData?.alt || 'Media';
+const isVideo = mediaUrl?.endsWith('.mp4') || mediaUrl?.endsWith('.webm');
+---
+
+<section class="py-12 md:py-20">
+  <div class="container px-4">
+    {mediaUrl && (
+      <div class="max-w-5xl mx-auto">
+        {isVideo ? (
+          <video
+            controls
+            class="w-full h-auto rounded-lg shadow-2xl"
+            poster={mediaData?.sizes?.og?.url}
+          >
+            <source src={mediaUrl} type="video/mp4" />
+            Ваш браузер не підтримує відео.
+          </video>
+        ) : (
+          <img
+            src={mediaUrl}
+            alt={mediaAlt}
+            class="w-full h-auto rounded-lg shadow-2xl"
+            loading="lazy"
+          />
+        )}
+      </div>
+    )}
+  </div>
+</section>

@@ -9,8 +9,13 @@ import sharp from 'sharp';
 import {Users} from './collections/Users';
 import {Media} from './collections/Media';
 import {Pages} from './collections/Pages';
-import { GeneralSettings } from './global/GeneralSettings';
-
+import {Projects} from './collections/Projects';
+import {Articles} from './collections/Articles';
+import {Services} from './collections/Services';
+import {FAQ} from './collections/FAQ';
+import {Steps} from './collections/Steps';
+import {ContactSubmissions} from './collections/ContactSubmissions';
+import {SiteSettings} from './globals/SiteSettings';
 
 import {en} from '@payloadcms/translations/languages/en';
 import {ru} from '@payloadcms/translations/languages/ru';
@@ -29,8 +34,18 @@ export default buildConfig({
 			baseDir: path.resolve(dirname),
 		},
 	},
-	collections: [Users, Media, Pages],
-	globals: [GeneralSettings],
+	collections: [
+		Users,
+		Media,
+		Pages,
+		Projects,
+		Articles,
+		Services,
+		FAQ,
+		Steps,
+		ContactSubmissions,
+	],
+	globals: [SiteSettings],
 	editor: lexicalEditor(),
 	secret: process.env.PAYLOAD_SECRET || '',
 	typescript: {

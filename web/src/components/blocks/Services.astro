@@ -1,0 +1,213 @@
+---
+import Button from '../ui/Button.astro';
+import {Icon} from 'astro-icon/components';
+
+const {title, subtitle, services, showAllButton, buttonText} = Astro.props;
+const locale = Astro.props.locale || 'uk';
+
+const getLocalizedLink = (link: string, currentLocale: string): string => {
+	const defaultLang = 'uk';
+	if (link === '/') {
+		if (currentLocale !== defaultLang) {
+			return `/${currentLocale}`;
+		}
+		return '/';
+	}
+	if (link.startsWith('/') || link.includes('://')) {
+		return link;
+	}
+	if (currentLocale === defaultLang) {
+		return `/${link}`;
+	} else {
+		return `/${currentLocale}/${link}`;
+	}
+};
+---
+
+<section class='relative py-24 md:py-32 overflow-hidden'>
+	<div class='absolute inset-0 bg-gradient-to-b from-transparent via-primary-800/50 to-transparent pointer-events-none'></div>
+	
+	<div class='container px-4 relative z-10'>
+		{title && (
+			<h2 class='text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 fade-in-up'>
+				<span class='gradient-text'>{title}</span>
+			</h2>
+		)}
+		{subtitle && (
+			<p class='text-lg md:text-xl text-center text-primary-150 mb-16 max-w-2xl mx-auto fade-in-up fade-in-delay-1'>
+				{subtitle}
+			</p>
+		)}
+
+		{services && services.length > 0 && (
+			<div class='services-slider-wrapper mb-12'>
+				<div class='swiper services-swiper'>
+					<div class='swiper-wrapper'>
+						{services.map((service: any, index: number) => {
+							const serviceData = typeof service === 'object' ? service : null;
+							if (!serviceData) return null;
+
+							return (
+								<div
+									class='swiper-slide'
+									style={`animation-delay: ${index * 0.1}s`}>
+									<div class='group relative h-full bg-gradient-to-br from-primary-850 via-primary-800 to-primary-850 p-8 rounded-2xl border border-primary-700/50 hover:border-primary-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/10 hover:-translate-y-2'>
+										<div class='absolute inset-0 bg-gradient-to-br from-primary-500/0 to-primary-500/0 group-hover:from-primary-500/5 group-hover:to-transparent rounded-2xl transition-all duration-500'></div>
+										
+										<div class='relative z-10'>
+											{serviceData.icon && (
+												<div class='text-6xl mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 flex items-center justify-center'>
+													<Icon name={serviceData.icon} />
+												</div>
+											)}
+											{serviceData.title && (
+												<h3 class='text-2xl md:text-3xl font-bold text-primary-50 mb-4 group-hover:text-primary-200 transition-colors'>
+													{serviceData.title}
+												</h3>
+											)}
+											{serviceData.description && (
+												<p class='text-primary-150 mb-6 leading-relaxed line-clamp-3'>
+													{serviceData.description}
+												</p>
+											)}
+											{serviceData.list && serviceData.list.length > 0 && (
+												<ul class='space-y-3 mb-8'>
+													{serviceData.list.slice(0, 3).map((item: any) => (
+														<li class='flex items-start gap-3 text-sm text-primary-100'>
+															<span class='text-primary-500 mt-1 text-lg'>→</span>
+															<span>{item.item}</span>
+														</li>
+													))}
+												</ul>
+											)}
+											<div class='flex items-center justify-between pt-6 border-t border-primary-700/50'>
+												{serviceData.price && (
+													<div class='flex items-baseline gap-3'>
+														{serviceData.price_discount && (
+															<span class='text-lg text-primary-150 line-through opacity-60'>
+																${serviceData.price}
+															</span>
+														)}
+														<span class='text-3xl font-bold gradient-text'>
+															${serviceData.price_discount || serviceData.price}
+														</span>
+													</div>
+												)}
+												<Button
+													variant='outline'
+													size='sm'
+													isLink
+													href={getLocalizedLink(`/services/${serviceData.slug}`, locale)}
+													class='glow-effect'>
+													Детальніше
+												</Button>
+											</div>
+										</div>
+									</div>
+								</div>
+							);
+						})}
+					</div>
+					<div class='swiper-pagination services-pagination mt-8'></div>
+					<div class='swiper-button-next services-next'></div>
+					<div class='swiper-button-prev services-prev'></div>
+				</div>
+			</div>
+		)}
+
+		{showAllButton && buttonText && (
+			<div class='text-center fade-in-up fade-in-delay-2'>
+				<Button
+					variant='primary'
+					size='lg'
+					isLink
+					href={getLocalizedLink('/services', locale)}
+					class='glow-effect'>
+					{buttonText}
+				</Button>
+			</div>
+		)}
+	</div>
+</section>
+
+<script>
+	import {Swiper} from 'swiper';
+	import {Navigation, Pagination, Autoplay} from 'swiper/modules';
+	import 'swiper/css';
+	import 'swiper/css/navigation';
+	import 'swiper/css/pagination';
+
+	const servicesSwiperEl = document.querySelector('.services-swiper');
+	if (servicesSwiperEl) {
+		new Swiper('.services-swiper', {
+			modules: [Navigation, Pagination, Autoplay],
+			slidesPerView: 1,
+			spaceBetween: 24,
+			loop: true,
+			autoplay: {
+				delay: 5000,
+				disableOnInteraction: false,
+			},
+			breakpoints: {
+				640: {
+					slidesPerView: 2,
+				},
+				1024: {
+					slidesPerView: 3,
+				},
+			},
+			navigation: {
+				nextEl: '.services-next',
+				prevEl: '.services-prev',
+			},
+			pagination: {
+				el: '.services-pagination',
+				clickable: true,
+			},
+		});
+	}
+</script>
+
+<style>
+	.services-swiper {
+		padding-bottom: 60px;
+	}
+
+	.services-next,
+	.services-prev {
+		color: var(--color-primary-500) !important;
+		width: 48px !important;
+		height: 48px !important;
+		margin-top: -24px !important;
+		top: 50% !important;
+		z-index: 10 !important;
+		opacity: 0.8;
+		transition: opacity 0.3s ease;
+	}
+
+	.services-next:hover,
+	.services-prev:hover {
+		opacity: 1;
+	}
+
+	.services-next::after,
+	.services-prev::after {
+		font-size: 24px !important;
+		font-weight: 700 !important;
+	}
+
+	.services-pagination .swiper-pagination-bullet {
+		background: var(--color-primary-700);
+		opacity: 0.5;
+		width: 12px;
+		height: 12px;
+		transition: all 0.3s ease;
+	}
+
+	.services-pagination .swiper-pagination-bullet-active {
+		background: var(--color-primary-500);
+		opacity: 1;
+		width: 32px;
+		border-radius: 6px;
+	}
+</style>

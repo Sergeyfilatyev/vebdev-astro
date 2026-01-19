@@ -28,9 +28,9 @@ export async function getStaticPaths() {
 	// 1. Получение Глобальных настроек (Header, Footer, Settings)
 	for (const lang of langs) {
 		try {
-			// Получаем GeneralSettings
+			// Получаем SiteSettings
 			const settingsResponse = await fetch(
-				`${cmsUrl}/api/globals/general-settings?locale=${lang}`
+				`${cmsUrl}/api/globals/site-settings?locale=${lang}`
 			);
 			const settingsData = settingsResponse.ok
 				? await settingsResponse.json()
@@ -102,5 +102,5 @@ const {page, settings, locale} = Astro.props;
 	title={page.title}
 	settings={settings}
 	locale={locale}>
-	<BlockRenderer blocks={page.blocks} />
+	<BlockRenderer blocks={page.blocks} locale={locale} />
 </BaseLayout>

@@ -70,6 +70,12 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    projects: Project;
+    articles: Article;
+    services: Service;
+    faq: Faq;
+    steps: Step;
+    'contact-submissions': ContactSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -80,6 +86,12 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    articles: ArticlesSelect<false> | ArticlesSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
+    steps: StepsSelect<false> | StepsSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -90,10 +102,10 @@ export interface Config {
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'ru' | 'uk') | ('en' | 'ru' | 'uk')[];
   globals: {
-    'general-settings': GeneralSetting;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
-    'general-settings': GeneralSettingsSelect<false> | GeneralSettingsSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: 'en' | 'ru' | 'uk';
   user: User & {
@@ -232,46 +244,242 @@ export interface Media {
  */
 export interface Page {
   id: number;
-  /**
-   * The title of the page
-   */
   title: string;
   /**
-   * The description of the page
-   */
-  description: string;
-  /**
-   * The slug of the page
+   * URL-friendly identifier (e.g., "home", "services", "portfolio")
    */
   slug: string;
   /**
-   * The blocks of the page
+   * SEO meta description
    */
-  blocks?: (Hero | ContentBlock | MediaBlock)[] | null;
+  metaDescription?: string | null;
+  /**
+   * Comma-separated keywords for SEO
+   */
+  seoKeywords?: string | null;
+  /**
+   * Image for social sharing (Facebook, LinkedIn, etc.). If not set, the default OG image from Site Settings will be used.
+   */
+  ogImage?: (number | null) | Media;
+  status: 'draft' | 'published';
+  blocks?:
+    | (
+        | {
+            variant: 'default' | 'left' | 'right' | 'center';
+            headline?: string | null;
+            subheadline?: string | null;
+            primaryCTA?: {
+              text: string;
+              url: string;
+            };
+            secondaryCTA?: {
+              text?: string | null;
+              url?: string | null;
+            };
+            backgroundVideo?: (number | null) | Media;
+            backgroundImage?: (number | null) | Media;
+            titleBrand?: string | null;
+            title?: string | null;
+            subtitle?: string | null;
+            paragraph?: string | null;
+            buttonText?: string | null;
+            buttonLink?: string | null;
+            variantBackgroundImage?: (number | null) | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hero';
+          }
+        | {
+            /**
+             * Unique identifier for this section (e.g., "mission", "approach", "partnership")
+             */
+            sectionIdentifier: string;
+            title: string;
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            content_html?: string | null;
+            /**
+             * Show this section on the website
+             */
+            isVisible?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'content';
+          }
+        | {
+            media: number | Media;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'mediaBlock';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            advantages?:
+              | {
+                  /**
+                   * Emoji icon (e.g., "⚡", "🎨", "🔍")
+                   */
+                  icon: string;
+                  title: string;
+                  description?: string | null;
+                  points?:
+                    | {
+                        point: string;
+                        id?: string | null;
+                      }[]
+                    | null;
+                  order?: number | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'advantages';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * Select services to display
+             */
+            services?: (number | Service)[] | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'servicesBlock';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * Select projects to display
+             */
+            projects?: (number | Project)[] | null;
+            showAllButton?: boolean | null;
+            buttonText?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'portfolio';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * Select steps to display
+             */
+            steps?: (number | Step)[] | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'stepsBlock';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            /**
+             * Select FAQ items to display
+             */
+            faqs?: (number | Faq)[] | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'faqBlock';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            stats?:
+              | {
+                  number: number;
+                  label: string;
+                  /**
+                   * Optional icon (emoji or iconify name)
+                   */
+                  icon?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'stats';
+          }
+        | {
+            title?: string | null;
+            subtitle?: string | null;
+            showNameField?: boolean | null;
+            showEmailField?: boolean | null;
+            showPhoneField?: boolean | null;
+            showMessageField?: boolean | null;
+            buttonText?: string | null;
+            policyText?: string | null;
+            policyLink?: string | null;
+            successMessage?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contact';
+          }
+      )[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Hero".
+ * via the `definition` "services".
  */
-export interface Hero {
-  titleBrand?: string | null;
+export interface Service {
+  id: number;
   title: string;
-  subtitle?: string | null;
-  paragraph?: string | null;
-  buttonText?: string | null;
-  type?: ('right' | 'left' | 'center') | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'hero';
+  description?: string | null;
+  /**
+   * URL-friendly identifier (e.g., "corporate-websites")
+   */
+  slug: string;
+  list?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Service price (e.g., "800 $")
+   */
+  price?: string | null;
+  /**
+   * Discounted price (e.g., "599 $")
+   */
+  price_discount?: string | null;
+  /**
+   * Iconify icon name (e.g., "twemoji:briefcase")
+   */
+  icon?: string | null;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock".
+ * via the `definition` "projects".
  */
-export interface ContentBlock {
-  body?: {
+export interface Project {
+  id: number;
+  title: string;
+  subtitle?: string | null;
+  description?: {
     root: {
       type: string;
       children: {
@@ -286,20 +494,133 @@ export interface ContentBlock {
     };
     [k: string]: unknown;
   } | null;
-  body_html?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'content';
+  advantages?: string | null;
+  /**
+   * URL-friendly identifier (e.g., "dobro-med-odesa")
+   */
+  slug: string;
+  /**
+   * Link to the live project website
+   */
+  url?: string | null;
+  image: number | Media;
+  /**
+   * Show this project on the homepage
+   */
+  featured?: boolean | null;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock".
+ * via the `definition` "steps".
  */
-export interface MediaBlock {
-  media: number | Media;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'mediaBlock';
+export interface Step {
+  id: number;
+  /**
+   * Step number (e.g., "01", "02", "03")
+   */
+  step: string;
+  /**
+   * Emoji icon (e.g., "📞", "🎯", "📝")
+   */
+  icon: string;
+  title: string;
+  description?: string | null;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq".
+ */
+export interface Faq {
+  id: number;
+  question: string;
+  answer: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  category?: ('general' | 'services' | 'portfolio' | 'pricing' | 'other') | null;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
+  id: number;
+  title: string;
+  /**
+   * URL-friendly identifier (auto-generated from title if not provided)
+   */
+  slug: string;
+  /**
+   * Short summary for article preview
+   */
+  excerpt?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  featuredImage?: (number | null) | Media;
+  publishedDate?: string | null;
+  /**
+   * Article author name
+   */
+  author?: string | null;
+  status: 'draft' | 'published';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: number;
+  name: string;
+  email?: string | null;
+  phone: string;
+  message?: string | null;
+  status: 'new' | 'contacted' | 'closed';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -336,6 +657,30 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'pages';
         value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'articles';
+        value: number | Article;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
+      } | null)
+    | ({
+        relationTo: 'steps';
+        value: number | Step;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: number | ContactSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -499,50 +844,250 @@ export interface MediaSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  description?: T;
   slug?: T;
+  metaDescription?: T;
+  seoKeywords?: T;
+  ogImage?: T;
+  status?: T;
   blocks?:
     | T
     | {
-        hero?: T | HeroSelect<T>;
-        content?: T | ContentBlockSelect<T>;
-        mediaBlock?: T | MediaBlockSelect<T>;
+        hero?:
+          | T
+          | {
+              variant?: T;
+              headline?: T;
+              subheadline?: T;
+              primaryCTA?:
+                | T
+                | {
+                    text?: T;
+                    url?: T;
+                  };
+              secondaryCTA?:
+                | T
+                | {
+                    text?: T;
+                    url?: T;
+                  };
+              backgroundVideo?: T;
+              backgroundImage?: T;
+              titleBrand?: T;
+              title?: T;
+              subtitle?: T;
+              paragraph?: T;
+              buttonText?: T;
+              buttonLink?: T;
+              variantBackgroundImage?: T;
+              id?: T;
+              blockName?: T;
+            };
+        content?:
+          | T
+          | {
+              sectionIdentifier?: T;
+              title?: T;
+              content?: T;
+              content_html?: T;
+              isVisible?: T;
+              id?: T;
+              blockName?: T;
+            };
+        mediaBlock?:
+          | T
+          | {
+              media?: T;
+              id?: T;
+              blockName?: T;
+            };
+        advantages?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              advantages?:
+                | T
+                | {
+                    icon?: T;
+                    title?: T;
+                    description?: T;
+                    points?:
+                      | T
+                      | {
+                          point?: T;
+                          id?: T;
+                        };
+                    order?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        servicesBlock?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              services?: T;
+              id?: T;
+              blockName?: T;
+            };
+        portfolio?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              projects?: T;
+              showAllButton?: T;
+              buttonText?: T;
+              id?: T;
+              blockName?: T;
+            };
+        stepsBlock?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              steps?: T;
+              id?: T;
+              blockName?: T;
+            };
+        faqBlock?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              faqs?: T;
+              id?: T;
+              blockName?: T;
+            };
+        stats?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              stats?:
+                | T
+                | {
+                    number?: T;
+                    label?: T;
+                    icon?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        contact?:
+          | T
+          | {
+              title?: T;
+              subtitle?: T;
+              showNameField?: T;
+              showEmailField?: T;
+              showPhoneField?: T;
+              showMessageField?: T;
+              buttonText?: T;
+              policyText?: T;
+              policyLink?: T;
+              successMessage?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Hero_select".
+ * via the `definition` "projects_select".
  */
-export interface HeroSelect<T extends boolean = true> {
-  titleBrand?: T;
+export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   subtitle?: T;
-  paragraph?: T;
-  buttonText?: T;
-  type?: T;
-  id?: T;
-  blockName?: T;
+  description?: T;
+  advantages?: T;
+  slug?: T;
+  url?: T;
+  image?: T;
+  featured?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "ContentBlock_select".
+ * via the `definition` "articles_select".
  */
-export interface ContentBlockSelect<T extends boolean = true> {
-  body?: T;
-  body_html?: T;
-  id?: T;
-  blockName?: T;
+export interface ArticlesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  content?: T;
+  featuredImage?: T;
+  publishedDate?: T;
+  author?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "MediaBlock_select".
+ * via the `definition` "services_select".
  */
-export interface MediaBlockSelect<T extends boolean = true> {
-  media?: T;
-  id?: T;
-  blockName?: T;
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  slug?: T;
+  list?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
+  price?: T;
+  price_discount?: T;
+  icon?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  category?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "steps_select".
+ */
+export interface StepsSelect<T extends boolean = true> {
+  step?: T;
+  icon?: T;
+  title?: T;
+  description?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  phone?: T;
+  message?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -585,136 +1130,264 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Global site settings including header, footer, contact information, and social media
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "general-settings".
+ * via the `definition` "site-settings".
  */
-export interface GeneralSetting {
+export interface SiteSetting {
   id: number;
-  headerLogo: number | Media;
-  footerLogo?: (number | null) | Media;
-  footerCopyright?: string | null;
-  buttonCTA?: string | null;
-  headerMenu?:
+  /**
+   * Main site logo
+   */
+  logo?: (number | null) | Media;
+  navigation?:
     | {
         label: string;
-        link: string;
-        visibility: 'all' | 'desktop' | 'mobile';
+        /**
+         * URL or anchor link (e.g., "/services" or "#contact")
+         */
+        url: string;
+        visibility?: ('all' | 'desktop' | 'mobile') | null;
         id?: string | null;
       }[]
     | null;
-  footerMenu?:
+  ctaButton?: {
+    text?: string | null;
+    url?: string | null;
+  };
+  /**
+   * Logo displayed in footer (can be different from header logo)
+   */
+  footerLogo?: (number | null) | Media;
+  /**
+   * Company description or information displayed in footer
+   */
+  companyInfo?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Organize footer links into groups (e.g., Services, Company)
+   */
+  footerLinkGroups?:
     | {
-        label?: string | null;
-        link?: string | null;
+        title: string;
+        links: {
+          label: string;
+          url: string;
+          id?: string | null;
+        }[];
         id?: string | null;
       }[]
     | null;
-  email?: {
-    label?: string | null;
-    value?: string | null;
+  copyright?: string | null;
+  email: string;
+  phone?: string | null;
+  /**
+   * Company physical address
+   */
+  address?: string | null;
+  workingHours?: {
+    weekdays?: string | null;
+    weekend?: string | null;
   };
-  phone?: {
-    label?: string | null;
-    value?: string | null;
-  };
-  address?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  telegram?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  whatsapp?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  viber?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  instagram?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  facebook?: {
-    label?: string | null;
-    url?: string | null;
+  socialLinks?:
+    | {
+        platform: 'telegram' | 'whatsapp' | 'viber' | 'instagram' | 'facebook' | 'linkedin' | 'other';
+        url: string;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  heroTitle1?: string | null;
+  heroTitle2?: string | null;
+  heroText?: string | null;
+  consultButtonText?: string | null;
+  aboutTitle?: string | null;
+  aboutSubtitle?: string | null;
+  aboutParagraph?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  advTitle?: string | null;
+  advantages?:
+    | {
+        /**
+         * Emoji icon (e.g., "⚡", "🎨", "🔍")
+         */
+        icon: string;
+        title: string;
+        description?: string | null;
+        points?:
+          | {
+              point: string;
+              id?: string | null;
+            }[]
+          | null;
+        order?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  statsClients?: number | null;
+  statsYears?: number | null;
+  statsProjects?: number | null;
+  bannerTitle?: string | null;
+  bannerText1?: string | null;
+  bannerText2?: string | null;
+  bannerButtonText?: string | null;
+  bannerSubtext?: string | null;
+  bannerActive?: boolean | null;
+  /**
+   * Base URL of the site, e.g. "https://veb-dev.com" (without trailing slash). Used for sitemap, canonical URLs, and social sharing.
+   */
+  siteUrl?: string | null;
+  /**
+   * When disabled, robots.txt and meta robots will disallow indexing (recommended while the site is under construction).
+   */
+  allowIndexing?: boolean | null;
+  /**
+   * Fallback <title> for pages that do not provide their own.
+   */
+  defaultMetaTitle?: string | null;
+  /**
+   * Fallback description for pages that do not provide their own.
+   */
+  defaultMetaDescription?: string | null;
+  /**
+   * Used for social sharing (Facebook, LinkedIn, etc.) when a page does not set its own og:image.
+   */
+  defaultOgImage?: (number | null) | Media;
+  analytics?: {
+    /**
+     * Full HTML/JS snippet that will be injected into the <head>. You can paste complete <script>...</script> blocks (e.g. Google Analytics, GTM, pixels) or other tags (meta, link, etc.).
+     */
+    headScript?: string | null;
+    /**
+     * Full HTML/JS snippet that will be injected right before </body>. You can paste complete <script>...</script> blocks (e.g. chat widgets, heatmaps) or other HTML.
+     */
+    bodyEndScript?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "general-settings_select".
+ * via the `definition` "site-settings_select".
  */
-export interface GeneralSettingsSelect<T extends boolean = true> {
-  headerLogo?: T;
-  footerLogo?: T;
-  footerCopyright?: T;
-  buttonCTA?: T;
-  headerMenu?:
+export interface SiteSettingsSelect<T extends boolean = true> {
+  logo?: T;
+  navigation?:
     | T
     | {
         label?: T;
-        link?: T;
+        url?: T;
         visibility?: T;
         id?: T;
       };
-  footerMenu?:
+  ctaButton?:
     | T
     | {
-        label?: T;
-        link?: T;
+        text?: T;
+        url?: T;
+      };
+  footerLogo?: T;
+  companyInfo?: T;
+  footerLinkGroups?:
+    | T
+    | {
+        title?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              url?: T;
+              id?: T;
+            };
         id?: T;
       };
-  email?:
+  copyright?: T;
+  email?: T;
+  phone?: T;
+  address?: T;
+  workingHours?:
     | T
     | {
-        label?: T;
-        value?: T;
+        weekdays?: T;
+        weekend?: T;
       };
-  phone?:
+  socialLinks?:
     | T
     | {
-        label?: T;
-        value?: T;
-      };
-  address?:
-    | T
-    | {
-        label?: T;
+        platform?: T;
         url?: T;
+        label?: T;
+        id?: T;
       };
-  telegram?:
+  heroTitle1?: T;
+  heroTitle2?: T;
+  heroText?: T;
+  consultButtonText?: T;
+  aboutTitle?: T;
+  aboutSubtitle?: T;
+  aboutParagraph?: T;
+  advTitle?: T;
+  advantages?:
     | T
     | {
-        label?: T;
-        url?: T;
+        icon?: T;
+        title?: T;
+        description?: T;
+        points?:
+          | T
+          | {
+              point?: T;
+              id?: T;
+            };
+        order?: T;
+        id?: T;
       };
-  whatsapp?:
+  statsClients?: T;
+  statsYears?: T;
+  statsProjects?: T;
+  bannerTitle?: T;
+  bannerText1?: T;
+  bannerText2?: T;
+  bannerButtonText?: T;
+  bannerSubtext?: T;
+  bannerActive?: T;
+  siteUrl?: T;
+  allowIndexing?: T;
+  defaultMetaTitle?: T;
+  defaultMetaDescription?: T;
+  defaultOgImage?: T;
+  analytics?:
     | T
     | {
-        label?: T;
-        url?: T;
-      };
-  viber?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-      };
-  instagram?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-      };
-  facebook?:
-    | T
-    | {
-        label?: T;
-        url?: T;
+        headScript?: T;
+        bodyEndScript?: T;
       };
   updatedAt?: T;
   createdAt?: T;
